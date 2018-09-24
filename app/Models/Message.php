@@ -111,7 +111,7 @@ class Message extends Model
             )
         );
 
-        $this->save();
+        return $this->save();
     }
 
     /**

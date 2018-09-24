@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Message;
 use App\Models\Reminder;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -39,17 +40,19 @@ class SendReminder implements ShouldQueue
         }
 
         // Create message and find text
-        $message = new Message([
+        $message = ( new Message([
             'reminder_id' => $this->reminder->id
-        ]);
-        $message->send();
+        ]))->send();
     }
 
 
     /**
-     * Check if reminder was already handled
+     * Check if reminder was already handled in the last 24 hours
      */
     private function reminderAlreadySent() {
-        return false;
+        return Message::where("created_at",">",Carbon::now()->subDay())
+                ->where("created_at","<",Carbon::now())
+                ->where("reminder_id",$this->reminder->id)
+                ->count() > 0;
     }
 }
