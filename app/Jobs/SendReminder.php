@@ -50,7 +50,8 @@ class SendReminder implements ShouldQueue
      * Check if reminder was already handled in the last 24 hours
      */
     private function reminderAlreadySent() {
-        return Message::where("created_at",">",Carbon::now()->subDay())
+        // TODO: change if it's daily, one-off...
+        return Message::where("created_at",">",Carbon::now()->subDay()->addMinutes(2))
                 ->where("created_at","<",Carbon::now())
                 ->where("reminder_id",$this->reminder->id)
                 ->count() > 0;
